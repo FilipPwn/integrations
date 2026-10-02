@@ -33,7 +33,7 @@
     {
       "event": {"code": "1203", "kind": "event", "action": "adfs-authentication-failed", "category": ["authentication"], "type": ["start"], "outcome": "failure"},
       "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1203", "user": {"name": "svc_adfs_lab"}, "event_data": {"param1": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", "param2": "<AuditBase><AuditResult>Failure</AuditResult><UserId>alice@lab.local</UserId><IpAddress>198.51.100.44,10.10.10.1</IpAddress></AuditBase>"}, "adfs": {"activity_id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", "ip_address": "198.51.100.44,10.10.10.1", "audit_result": "Failure", "user_id": "alice@lab.local"}},
-      "source": {"ip": "10.10.10.1"}, "related": {"user": ["alice", "alice@lab.local"], "ip": ["10.10.10.1"]}, "user": {"name": "alice", "domain": "lab.local"}, "ecs": {"version": "8.17.0"}, "host": {"os": {"type": "windows", "family": "windows"}}
+      "source": {"ip": "10.10.10.1"}, "related": {"user": ["alice", "alice@lab.local"], "ip": ["198.51.100.44", "10.10.10.1"]}, "user": {"name": "alice", "domain": "lab.local"}, "ecs": {"version": "8.17.0"}, "host": {"os": {"type": "windows", "family": "windows"}}
     }
   ]
 }

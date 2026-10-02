@@ -49,7 +49,9 @@ The `IpAddress` audit field can contain multiple IPs, including a client-supplie
 `X-Forwarded-For` address. The last, proxy-observed address is used as `source.ip`
 when valid; the entire unmodified value remains in `winlog.adfs.ip_address`.
 Earlier addresses in the list are not authenticated client identities. NAT can
-still hide the original client behind a shared private address. Use
+still hide the original client behind a shared private address. All valid
+addresses in the chain are also added to `related.ip` for investigation;
+their presence there does not make forwarded values trustworthy. Use
 `winlog.adfs.activity_id` to investigate related events, but do not count
 different event IDs (for example 1201 and 1203) as separate sign-in attempts.
 AD FS event 1210 requires extranet smart lockout and traffic through an AD FS
@@ -683,7 +685,7 @@ Please refer to the following [document](https://www.elastic.co/guide/en/ecs/cur
 | winlog.adfs.error_code | ErrorCode from the AD FS XML, if present and not N/A. | keyword |
 | winlog.adfs.failure_type | FailureType from the AD FS XML, if present. | keyword |
 | winlog.adfs.instance_id | Generic Instance ID from 307/510 param1; 510 can contain HTTP headers or other details, not just configuration. | keyword |
-| winlog.adfs.ip_address | Original IpAddress value from the AD FS XML. It may contain more than one address including client-provided forwarded headers. source.ip uses the last (proxy-observed) address when present; earlier addresses are not trusted. | keyword |
+| winlog.adfs.ip_address | Original IpAddress value from the AD FS XML. It may contain more than one address including client-provided forwarded headers. source.ip uses the last (proxy-observed) address when present. All valid addresses also go to related.ip for investigation; earlier forwarded values are not trusted. | keyword |
 | winlog.adfs.mfa_method | MFA method used by AD FS, if present. | keyword |
 | winlog.adfs.mfa_performed | Whether AD FS itself performed MFA. Application-local MFA is not reflected here. | boolean |
 | winlog.adfs.network_location | Intranet or extranet location as evaluated by AD FS. | keyword |

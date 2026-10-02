@@ -212,6 +212,34 @@ processors:
       field: source.ip
       ignore_missing: true
       if: 'ctx.winlog?._tmp?.adfs?.ip_candidates != null'
+  # related.ip is a pivot over every valid address mentioned in the audit,
+  # including untrusted forwarded headers. source.ip remains the last hop.
+  - foreach:
+      tag: adfs_xml_trim_related_ip
+      field: winlog._tmp.adfs.ip_candidates
+      ignore_missing: true
+      processor:
+        trim:
+          field: _ingest._value
+  - foreach:
+      tag: adfs_xml_validate_related_ip
+      field: winlog._tmp.adfs.ip_candidates
+      ignore_missing: true
+      processor:
+        convert:
+          field: _ingest._value
+          type: ip
+          on_failure:
+            - set:
+                field: _ingest._value
+                value: ''
+  - append:
+      tag: adfs_xml_related_ip_hops
+      field: related.ip
+      copy_from: winlog._tmp.adfs.ip_candidates
+      allow_duplicates: false
+      ignore_empty_values: true
+      if: 'ctx.winlog?._tmp?.adfs?.ip_candidates instanceof List'
   - remove:
       field: winlog._tmp.adfs.ip_candidates
       ignore_missing: true

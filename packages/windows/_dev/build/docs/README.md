@@ -31,8 +31,9 @@ the two events describe one failed OAuth request. For 307/510, the shared
 HTTP headers unrelated to configuration. Only 307 gets `config_instance_id`;
 its actor can differ from `winlog.user`.
 For multi-address sign-in XML, `source.ip` uses the last, proxy-observed IP;
-earlier forwarded values can be supplied by clients and remain only in the
-raw `winlog.adfs.ip_address` chain.
+earlier forwarded values can be supplied by clients. The raw chain remains
+in `winlog.adfs.ip_address`, while all valid IPs also go to `related.ip` for
+searching, without implying that forwarded addresses are trusted.
 Positional audits and ECS normalization use standard ingest processors;
 only heterogeneous decoded XML components require a scoped script.
   

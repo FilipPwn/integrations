@@ -67,7 +67,8 @@
       description: >-
         Original IpAddress value from the AD FS XML. It may contain more than one
         address including client-provided forwarded headers. source.ip uses the
-        last (proxy-observed) address when present; earlier addresses are not trusted.
+        last (proxy-observed) address when present. All valid addresses also go
+        to related.ip for investigation; earlier forwarded values are not trusted.
     - name: current_bad_password_count
       type: long
       description: CurrentBadPasswordCount reported by AD FS extranet lockout event 1210, when present and numeric.

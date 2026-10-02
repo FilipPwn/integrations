@@ -49,7 +49,9 @@ The `IpAddress` audit field can contain multiple IPs, including a client-supplie
 `X-Forwarded-For` address. The last, proxy-observed address is used as `source.ip`
 when valid; the entire unmodified value remains in `winlog.adfs.ip_address`.
 Earlier addresses in the list are not authenticated client identities. NAT can
-still hide the original client behind a shared private address. Use
+still hide the original client behind a shared private address. All valid
+addresses in the chain are also added to `related.ip` for investigation;
+their presence there does not make forwarded values trustworthy. Use
 `winlog.adfs.activity_id` to investigate related events, but do not count
 different event IDs (for example 1201 and 1203) as separate sign-in attempts.
 AD FS event 1210 requires extranet smart lockout and traffic through an AD FS
