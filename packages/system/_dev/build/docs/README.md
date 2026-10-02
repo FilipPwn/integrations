@@ -23,7 +23,8 @@ If you're collecting Windows event logs, note that there are three related integ
 ### AD FS security audits
 
 The `system.security` data stream extracts AD FS Security audit XML for event IDs
-**1200-1210**. Per the [Microsoft AD FS event reference](https://learn.microsoft.com/en-us/windows-server/identity/ad-fs/troubleshooting/ad-fs-tshoot-logging#types-of-events),
+**1200-1210** and selected positional fields from **1029, 1030, 307, and 510**.
+Per the [Microsoft AD FS event reference](https://learn.microsoft.com/en-us/windows-server/identity/ad-fs/troubleshooting/ad-fs-tshoot-logging#types-of-events),
 1200/1201 are token issuance success/failure, 1202/1203 are credential validation
 success/failure, 1204/1205 are password change request success/failure, and
 1206/1207 are sign-out success/failure. Event 1210 is an extranet smart lockout
@@ -44,14 +45,29 @@ change requests use `event.category: iam`, sign-outs use `event.type: end`. A UP
 (`user@domain`) or down-level logon name (`DOMAIN\user`) is split into
 `user.name` and `user.domain`. `winlog.adfs.user_id` retains the original value.
 
-The `IpAddress` audit field can contain multiple IPs. The first candidate is
-used as `source.ip` when it is a valid address, while the unmodified value is
-stored in `winlog.adfs.ip_address`. Proxies can affect the reported IP. Use
+The `IpAddress` audit field can contain multiple IPs, including a client-supplied
+`X-Forwarded-For` address. The last, proxy-observed address is used as `source.ip`
+when valid; the entire unmodified value remains in `winlog.adfs.ip_address`.
+Earlier addresses in the list are not authenticated client identities. NAT can
+still hide the original client behind a shared private address. Use
 `winlog.adfs.activity_id` to investigate related events, but do not count
 different event IDs (for example 1201 and 1203) as separate sign-in attempts.
 AD FS event 1210 requires extranet smart lockout and traffic through an AD FS
 proxy; an intranet password failure alone does not produce it. `event.type`
 for 1210 is `info`, as AD FS log-only mode does not necessarily block the user.
+
+For OAuth client authentication errors, 1029 and 1030 both carry the same
+Activity ID and client ID. Their positional parameters differ: client IP is
+`param3` in 1029 and `param2` in 1030. The events are two audit records for
+one failed request. If AD FS does not provide a user ID, `user.name` remains
+unset. Configuration audit 307 exposes the acting account in `user.name` and
+`winlog.adfs.config_actor`, its SID in `user.id`, and its Instance ID in
+`winlog.adfs.config_instance_id` and `winlog.adfs.instance_id`. Event 510
+carries a generic `winlog.adfs.instance_id`: it can hold HTTP request/response
+headers or other details, and only a matching 307 establishes a link to a
+configuration audit. Its payload is not parsed. `winlog.user` continues to identify the
+audit-emitting account, which can differ from the actor. A 307 alone does not
+establish what was changed.
 
 For application-local MFA, `winlog.adfs.mfa_performed` remains `false` even if
 the application validates a second factor after AD FS has issued a token.

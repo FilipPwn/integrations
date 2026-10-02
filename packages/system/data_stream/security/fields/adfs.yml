@@ -1,9 +1,10 @@
 - name: winlog.adfs
   type: group
   description: >-
-    Selected fields from AD FS Security audit events 1200-1210.
-    The XML remains in winlog.event_data.param2. winlog.user identifies
-    the audit-emitting service account, not necessarily the signing-in user.
+    Selected fields from AD FS Security audit events 1200-1210, 1029/1030,
+    and 307/510. XML from 1200-1210 remains in winlog.event_data.param2.
+    winlog.user identifies the audit-emitting service account, not necessarily
+    the signing-in user or the configuration actor.
   fields:
     - name: activity_id
       type: keyword
@@ -43,7 +44,10 @@
       description: Authentication protocol from the request component.
     - name: oauth_client_id
       type: keyword
-      description: OAuth client ID from the AD FS audit, when available.
+      description: OAuth client ID from XML or from the event-specific param4 in 1029/1030.
+    - name: oauth_token_type
+      type: keyword
+      description: Token type from 1029 param2; in 1030 param2 is the client address instead.
     - name: oauth_grant
       type: keyword
       description: OAuth grant from the AD FS audit, when available.
@@ -62,7 +66,20 @@
       ignore_above: 4096
       description: >-
         Original IpAddress value from the AD FS XML. It may contain more than one
-        address; source.ip is set to the first candidate when valid.
+        address including client-provided forwarded headers. source.ip uses the
+        last (proxy-observed) address when present; earlier addresses are not trusted.
     - name: current_bad_password_count
       type: long
       description: CurrentBadPasswordCount reported by AD FS extranet lockout event 1210, when present and numeric.
+    - name: config_instance_id
+      type: keyword
+      description: Instance ID from configuration audit 307 param1; pair with the generic instance_id of associated 510 details.
+    - name: instance_id
+      type: keyword
+      description: Generic Instance ID from 307/510 param1; 510 can contain HTTP headers or other details, not just configuration.
+    - name: config_actor
+      type: keyword
+      description: Acting account from 307 param3; winlog.user still records the audit-emitting service account.
+    - name: config_actor_sid
+      type: keyword
+      description: SID of the configuration actor from 307 param2, when valid.

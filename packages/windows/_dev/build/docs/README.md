@@ -17,13 +17,22 @@ If you're collecting Windows event logs, note that there are three related integ
 - **[Custom Windows event log package](https://www.elastic.co/docs/reference/integrations/winlog)**: Collects logs from any user-defined Windows event log channel without specialized pipelines.
 
 The `windows.forwarded` data stream also extracts forwarded `AD FS Auditing`
-events 1200-1210 when their original channel is `Security`. It uses
+events 1200-1210 and selected fields from 1029, 1030, 307, and 510 when
+their original channel is `Security`. It uses
 the same `winlog.adfs.*`, `user.name`, and `source.ip` fields as `system.security`.
 The AD FS service account remains available under `winlog.user`; decoded
 request identities come from the Security audit XML. Event 1210 is specific
 to AD FS extranet smart lockout; it is not an intranet account lockout event.
 Microsoft documents the semantics of 1200-1207 and 1210; 1208/1209 are parsed
 only for fields present in the XML and are not assigned guessed actions.
+For 1029/1030, the client address and ID occupy event-specific positions;
+the two events describe one failed OAuth request. For 307/510, the shared
+`winlog.adfs.instance_id` correlates an audit and its details; 510 also contains
+HTTP headers unrelated to configuration. Only 307 gets `config_instance_id`;
+its actor can differ from `winlog.user`.
+For multi-address sign-in XML, `source.ip` uses the last, proxy-observed IP;
+earlier forwarded values can be supplied by clients and remain only in the
+raw `winlog.adfs.ip_address` chain.
   
 ## Data streams
 

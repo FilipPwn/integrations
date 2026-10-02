@@ -233,13 +233,13 @@
                     "audit_result": "Failure",
                     "audit_type": "ExtranetLockout",
                     "current_bad_password_count": 5,
-                    "ip_address": "10.10.10.4, 2001:db8::1",
+                    "ip_address": "198.51.100.44, 10.10.10.4",
                     "user_id": "eve@lab.local"
                 },
                 "channel": "Security",
                 "event_data": {
                     "param1": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
-                    "param2": "<AuditBase><AuditType>ExtranetLockout</AuditType><AuditResult>Failure</AuditResult><UserId>eve@lab.local</UserId><IpAddress>10.10.10.4, 2001:db8::1</IpAddress><CurrentBadPasswordCount>5</CurrentBadPasswordCount></AuditBase>"
+                    "param2": "<AuditBase><AuditType>ExtranetLockout</AuditType><AuditResult>Failure</AuditResult><UserId>eve@lab.local</UserId><IpAddress>198.51.100.44, 10.10.10.4</IpAddress><CurrentBadPasswordCount>5</CurrentBadPasswordCount></AuditBase>"
                 },
                 "event_id": "1210",
                 "provider_name": "AD FS Auditing"

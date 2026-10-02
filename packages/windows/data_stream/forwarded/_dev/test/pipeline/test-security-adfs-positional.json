@@ -1,0 +1,32 @@
+{
+  "events": [
+    {
+      "event": {"code": "1029"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1029", "user": {"name": "svc_adfs_lab"}, "event_data": {"param1": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "param2": "OAuthClientSecretSecurityToken", "param3": "10.10.10.11", "param4": "11111111-1111-1111-1111-111111111111", "param5": "MSIS9372: Invalid client secret provided."}}
+    },
+    {
+      "event": {"code": "1030"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1030", "user": {"name": "svc_adfs_lab"}, "event_data": {"param1": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "param2": "10.10.10.11", "param3": "11111111-1111-1111-1111-111111111111", "param4": "11111111-1111-1111-1111-111111111111"}}
+    },
+    {
+      "event": {"code": "307"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "307", "user": {"name": "svc_adfs_lab"}, "event_data": {"param1": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", "param2": "S-1-5-21-1000-500", "param3": "ADFS01\\Administrator"}}
+    },
+    {
+      "event": {"code": "510"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "510", "user": {"name": "svc_adfs_lab"}, "event_data": {"param1": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", "param2": "Configuration detail"}}
+    },
+    {
+      "event": {"code": "510"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "510", "user": {"name": "svc_adfs_lab"}, "event_data": {"param1": "cccccccc-cccc-cccc-cccc-cccccccccccc", "param2": "{\"Content-Type\":\"application/json\"}"}}
+    },
+    {
+      "event": {"code": "1029"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1029", "user": {"name": "svc_adfs_lab"}, "event_data": {"param1": "dddddddd-dddd-dddd-dddd-dddddddddddd", "param2": "OAuthClientSecretSecurityToken", "param3": "not-an-ip", "param4": "11111111-1111-1111-1111-111111111111"}}
+    },
+    {
+      "event": {"code": "1203"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1203", "user": {"name": "svc_adfs_lab"}, "event_data": {"param1": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", "param2": "<AuditBase><AuditResult>Failure</AuditResult><UserId>alice@lab.local</UserId><IpAddress>198.51.100.44,10.10.10.1</IpAddress></AuditBase>"}, "_tmp": {"adfs": {"audit_base": {"auditbase": {"auditresult": "Failure", "userid": "alice@lab.local", "ipaddress": "198.51.100.44,10.10.10.1"}}}}}
+    }
+  ]
+}

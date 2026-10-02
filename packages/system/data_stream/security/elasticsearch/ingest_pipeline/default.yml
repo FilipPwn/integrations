@@ -21,7 +21,7 @@ processors:
         ctx.winlog?.channel == 'Security' &&
         ctx.winlog.provider_name == 'AD FS Auditing' &&
         ctx.event?.code != null &&
-        ['1200', '1201', '1202', '1203', '1204', '1205', '1206', '1207', '1208', '1209', '1210'].contains(ctx.event.code)
+        ['1029', '1030', '307', '510', '1200', '1201', '1202', '1203', '1204', '1205', '1206', '1207', '1208', '1209', '1210'].contains(ctx.event.code)
   - pipeline:
       name: '{{ IngestPipeline "scheduled_task" }}'
       if: >-

@@ -2,11 +2,11 @@
 # Keep this pipeline byte-identical in:
 # - packages/system/data_stream/security/elasticsearch/ingest_pipeline/adfs.yml
 # - packages/windows/data_stream/forwarded/elasticsearch/ingest_pipeline/security_adfs.yml
-description: Normalize AD FS Security audit events after agent-side XML decoding.
+description: Normalize selected AD FS Security audits, including XML and positional events.
 processors:
   - script:
       tag: normalize_adfs_security_audit
-      description: Extract a bounded set of AD FS audit fields from agent-side decode_xml output.
+      description: Extract a bounded set of AD FS audit fields from XML or event-specific parameters.
       lang: painless
       params:
         actions:
@@ -56,6 +56,82 @@ processors:
         if (adfs == null) {
           adfs = new HashMap();
           ctx.winlog.put('adfs', adfs);
+        }
+        if (code.equals('1029') || code.equals('1030')) {
+          // Positions differ: 1029 param3 is the IP, while 1030 param2 is the IP.
+          copy(eventData, 'param1', adfs, 'activity_id');
+          copy(eventData, 'param4', adfs, 'oauth_client_id');
+          if (code.equals('1029')) {
+            copy(eventData, 'param2', adfs, 'oauth_token_type');
+          }
+          String ip = text(eventData.get(code.equals('1029') ? 'param3' : 'param2'));
+          if (ip != null && ctx.source?.ip == null) {
+            Map source = asMap(ctx.source);
+            if (source == null) {
+              source = new HashMap();
+              ctx.put('source', source);
+            }
+            source.put('ip', ip);
+          }
+          ctx.event.put('action', code.equals('1029') ? 'adfs-oauth-client-authentication-failed' : 'adfs-oauth-token-failed');
+          ctx.event.put('category', ['authentication']);
+          ctx.event.put('type', [code.equals('1029') ? 'start' : 'info']);
+          if (ctx.event.outcome == null) {
+            ctx.event.put('outcome', 'failure');
+          }
+          if (ctx.event.kind == null) {
+            ctx.event.put('kind', 'event');
+          }
+          return;
+        }
+        if (code.equals('307') || code.equals('510')) {
+          // 510 is generic detail (including HTTP headers), not only configuration.
+          // Its param1 is an Instance ID, not an authentication Activity ID.
+          copy(eventData, 'param1', adfs, 'instance_id');
+          if (code.equals('307')) {
+            copy(eventData, 'param1', adfs, 'config_instance_id');
+            copy(eventData, 'param3', adfs, 'config_actor');
+            String sid = text(eventData.get('param2'));
+            if (sid != null && sid.startsWith('S-1-')) {
+              adfs.put('config_actor_sid', sid);
+              Map user = asMap(ctx.user);
+              if (user == null) {
+                user = new HashMap();
+                ctx.put('user', user);
+              }
+              if (user.get('id') == null) {
+                user.put('id', sid);
+              }
+            }
+            String actor = text(eventData.get('param3'));
+            if (actor != null) {
+              Map user = asMap(ctx.user);
+              if (user == null) {
+                user = new HashMap();
+                ctx.put('user', user);
+              }
+              int slash = actor.indexOf('\\');
+              if (slash > 0 && slash < actor.length() - 1) {
+                if (user.get('domain') == null) {
+                  user.put('domain', actor.substring(0, slash));
+                }
+                if (user.get('name') == null) {
+                  user.put('name', actor.substring(slash + 1));
+                }
+              } else if (user.get('name') == null) {
+                user.put('name', actor);
+              }
+            }
+          }
+          ctx.event.put('action', code.equals('307') ? 'adfs-configuration-audit' : 'adfs-audit-detail');
+          if (code.equals('307')) {
+            ctx.event.put('category', ['configuration']);
+          }
+          ctx.event.put('type', ['info']);
+          if (ctx.event.kind == null) {
+            ctx.event.put('kind', 'event');
+          }
+          return;
         }
         copy(eventData, 'param1', adfs, 'activity_id');
 
@@ -159,17 +235,17 @@ processors:
 
         String ipAddress = text(adfs.get('ip_address'));
         if (ipAddress != null && ctx.source?.ip == null) {
-          for (String candidate : ipAddress.splitOnToken(',')) {
-            String ip = text(candidate);
-            if (ip != null) {
-              Map source = asMap(ctx.source);
-              if (source == null) {
-                source = new HashMap();
-                ctx.put('source', source);
-              }
-              source.put('ip', ip);
-              break;
+          // AD FS lists forwarded header IPs before the proxy-observed network IP.
+          // Client-supplied X-Forwarded-For can control the first address.
+          String[] candidates = ipAddress.splitOnToken(',');
+          String ip = text(candidates[candidates.length - 1]);
+          if (ip != null) {
+            Map source = asMap(ctx.source);
+            if (source == null) {
+              source = new HashMap();
+              ctx.put('source', source);
             }
+            source.put('ip', ip);
           }
         }
 

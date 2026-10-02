@@ -37,8 +37,8 @@
       "event": {"code": "1210"},
       "winlog": {
         "channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1210",
-        "event_data": {"param1": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", "param2": "<AuditBase><AuditType>ExtranetLockout</AuditType><AuditResult>Failure</AuditResult><UserId>eve@lab.local</UserId><IpAddress>10.10.10.4, 2001:db8::1</IpAddress><CurrentBadPasswordCount>5</CurrentBadPasswordCount></AuditBase>"},
-        "_tmp": {"adfs": {"audit_base": {"auditbase": {"audittype": "ExtranetLockout", "auditresult": "Failure", "userid": "eve@lab.local", "ipaddress": "10.10.10.4, 2001:db8::1", "currentbadpasswordcount": "5"}}}}
+        "event_data": {"param1": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", "param2": "<AuditBase><AuditType>ExtranetLockout</AuditType><AuditResult>Failure</AuditResult><UserId>eve@lab.local</UserId><IpAddress>198.51.100.44, 10.10.10.4</IpAddress><CurrentBadPasswordCount>5</CurrentBadPasswordCount></AuditBase>"},
+        "_tmp": {"adfs": {"audit_base": {"auditbase": {"audittype": "ExtranetLockout", "auditresult": "Failure", "userid": "eve@lab.local", "ipaddress": "198.51.100.44, 10.10.10.4", "currentbadpasswordcount": "5"}}}}
       }
     },
     {
