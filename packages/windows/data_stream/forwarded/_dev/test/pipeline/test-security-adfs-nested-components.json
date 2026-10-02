@@ -1,0 +1,12 @@
+{
+  "events": [
+    {
+      "event": {"code": "1202"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1202", "event_data": {"param1": "10101010-1010-1010-1010-101010101010", "param2": "<AuditBase><AuditResult>Success</AuditResult><UserId source=\"ADFS\">Ada@lab.local</UserId><ContextComponents><Component><MfaPerformed>1</MfaPerformed></Component><Component><IpAddress>198.51.100.44, 10.10.10.5</IpAddress><CurrentBadPasswordCount source=\"ADFS\">4</CurrentBadPasswordCount></Component></ContextComponents></AuditBase>"}, "_tmp": {"adfs": {"audit_base": {"auditbase": {"auditresult": "Success", "userid": {"#text": "Ada@lab.local"}, "contextcomponents": {"component": [{"mfaperformed": "1"}, {"ipaddress": "198.51.100.44, 10.10.10.5", "currentbadpasswordcount": {"#text": "4"}}]}}}}}}
+    },
+    {
+      "event": {"code": "1203"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1203", "event_data": {"param1": "12121212-1212-1212-1212-121212121212", "param2": "<AuditBase><AuditResult>Failure</AuditResult><UserId>N/A</UserId><ContextComponents><Component><IpAddress>198.51.100.44,</IpAddress><MfaPerformed>invalid</MfaPerformed></Component></ContextComponents></AuditBase>"}, "_tmp": {"adfs": {"audit_base": {"auditbase": {"auditresult": "Failure", "userid": "N/A", "contextcomponents": {"component": {"ipaddress": "198.51.100.44,", "mfaperformed": "invalid"}}}}}}}
+    }
+  ]
+}

@@ -4,6 +4,9 @@
     - description: Normalize documented forwarded AD FS Security audit events 1200-1207 and 1210, and extract available XML fields for 1208-1209 without assigning undocumented event semantics.
       type: enhancement
       link: https://github.com/elastic/integrations/pull/21781
+    - description: Normalize forwarded AD FS OAuth client errors (1029/1030) and configuration audits (307/510), use native processors where possible, and avoid trusting client-supplied forwarded IPs.
+      type: enhancement
+      link: https://github.com/elastic/integrations/issues/11539
 - version: "3.10.0"
   changes:
     - description: Deduplicate winlog ingest pipelines, field definitions, and input templates across data streams using shared files referenced via links.

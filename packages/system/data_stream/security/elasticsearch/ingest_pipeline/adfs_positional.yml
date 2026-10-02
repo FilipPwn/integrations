@@ -1,0 +1,141 @@
+---
+# Keep byte-identical with windows/forwarded/security_adfs_positional.yml.
+description: Normalize positional AD FS Security audits without scripting.
+processors:
+  - set:
+      tag: adfs_positional_activity_id
+      field: winlog.adfs.activity_id
+      copy_from: winlog.event_data.param1
+      ignore_empty_value: true
+      override: false
+      if: "['1029', '1030'].contains(ctx.event?.code) && !['-', 'N/A'].contains(ctx.winlog?.event_data?.param1)"
+  - set:
+      tag: adfs_positional_oauth_client
+      field: winlog.adfs.oauth_client_id
+      copy_from: winlog.event_data.param4
+      ignore_empty_value: true
+      override: false
+      if: "['1029', '1030'].contains(ctx.event?.code) && !['-', 'N/A'].contains(ctx.winlog?.event_data?.param4)"
+  - set:
+      tag: adfs_positional_oauth_type
+      field: winlog.adfs.oauth_token_type
+      copy_from: winlog.event_data.param2
+      ignore_empty_value: true
+      override: false
+      if: "ctx.event?.code == '1029' && !['-', 'N/A'].contains(ctx.winlog?.event_data?.param2)"
+  - set:
+      tag: adfs_oauth_1029_source
+      field: source.ip
+      copy_from: winlog.event_data.param3
+      ignore_empty_value: true
+      override: false
+      if: "ctx.event?.code == '1029' && !['-', 'N/A'].contains(ctx.winlog?.event_data?.param3)"
+  - set:
+      tag: adfs_oauth_1030_source
+      field: source.ip
+      copy_from: winlog.event_data.param2
+      ignore_empty_value: true
+      override: false
+      if: "ctx.event?.code == '1030' && !['-', 'N/A'].contains(ctx.winlog?.event_data?.param2)"
+  - set:
+      tag: adfs_positional_instance_id
+      field: winlog.adfs.instance_id
+      copy_from: winlog.event_data.param1
+      ignore_empty_value: true
+      override: false
+      if: "['307', '510'].contains(ctx.event?.code) && !['-', 'N/A'].contains(ctx.winlog?.event_data?.param1)"
+  - set:
+      tag: adfs_configuration_instance_id
+      field: winlog.adfs.config_instance_id
+      copy_from: winlog.adfs.instance_id
+      ignore_empty_value: true
+      override: false
+      if: "ctx.event?.code == '307'"
+  - set:
+      tag: adfs_configuration_actor
+      field: winlog.adfs.config_actor
+      copy_from: winlog.event_data.param3
+      ignore_empty_value: true
+      override: false
+      if: "ctx.event?.code == '307' && !['-', 'N/A'].contains(ctx.winlog?.event_data?.param3)"
+  - set:
+      tag: adfs_configuration_actor_sid
+      field: winlog.adfs.config_actor_sid
+      copy_from: winlog.event_data.param2
+      ignore_empty_value: true
+      override: false
+      if: "ctx.event?.code == '307' && ctx.winlog?.event_data?.param2 instanceof String && ctx.winlog.event_data.param2.startsWith('S-1-')"
+  - set:
+      tag: adfs_configuration_user_sid
+      field: user.id
+      copy_from: winlog.adfs.config_actor_sid
+      ignore_empty_value: true
+      override: false
+  - dissect:
+      tag: adfs_configuration_account
+      field: winlog.adfs.config_actor
+      pattern: '%{user.domain}\%{user.name}'
+      ignore_missing: true
+      ignore_failure: true
+      if: >-
+        ctx.user?.name == null && ctx.winlog?.adfs?.config_actor instanceof String &&
+        ctx.winlog.adfs.config_actor.contains('\\')
+  - set:
+      tag: adfs_configuration_account_without_domain
+      field: user.name
+      copy_from: winlog.adfs.config_actor
+      ignore_empty_value: true
+      override: false
+      if: >-
+        ctx.event?.code == '307' && ctx.winlog?.adfs?.config_actor instanceof String &&
+        !ctx.winlog.adfs.config_actor.contains('\\')
+  - set:
+      field: event.action
+      value: adfs-oauth-client-authentication-failed
+      if: "ctx.event?.code == '1029'"
+  - set:
+      field: event.action
+      value: adfs-oauth-token-failed
+      if: "ctx.event?.code == '1030'"
+  - set:
+      field: event.action
+      value: adfs-configuration-audit
+      if: "ctx.event?.code == '307'"
+  - set:
+      field: event.action
+      value: adfs-audit-detail
+      if: "ctx.event?.code == '510'"
+  - set:
+      field: event.category
+      value: [authentication]
+      if: "['1029', '1030'].contains(ctx.event?.code)"
+  - set:
+      field: event.category
+      value: [configuration]
+      if: "ctx.event?.code == '307'"
+  - set:
+      field: event.type
+      value: [start]
+      if: "ctx.event?.code == '1029'"
+  - set:
+      field: event.type
+      value: [info]
+      if: "['1030', '307', '510'].contains(ctx.event?.code)"
+  - set:
+      field: event.outcome
+      value: failure
+      override: false
+      if: "['1029', '1030'].contains(ctx.event?.code)"
+  - set:
+      field: event.kind
+      value: event
+      override: false
+  - convert:
+      tag: validate_adfs_positional_source_ip
+      field: source.ip
+      type: ip
+      ignore_missing: true
+      on_failure:
+        - remove:
+            field: source.ip
+            ignore_missing: true

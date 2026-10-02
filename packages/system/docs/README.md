@@ -71,6 +71,8 @@ establish what was changed.
 
 For application-local MFA, `winlog.adfs.mfa_performed` remains `false` even if
 the application validates a second factor after AD FS has issued a token.
+Positional audit fields and ECS normalization use standard ingest processors.
+Only heterogeneous decoded XML components are flattened by a scoped script.
 The Custom Windows event log integration does not apply this specialized
 System pipeline to its own data streams.
   

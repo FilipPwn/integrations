@@ -21,7 +21,15 @@ processors:
         ctx.winlog.channel.toLowerCase() == 'security' &&
         ctx.winlog.provider_name == 'AD FS Auditing' &&
         ctx.event?.code != null &&
-        ['1029', '1030', '307', '510', '1200', '1201', '1202', '1203', '1204', '1205', '1206', '1207', '1208', '1209', '1210'].contains(ctx.event.code)
+        ['1200', '1201', '1202', '1203', '1204', '1205', '1206', '1207', '1208', '1209', '1210'].contains(ctx.event.code)
+  - pipeline:
+      name: '{{ IngestPipeline "security_adfs_positional" }}'
+      tag: process_adfs_security_positional_audit
+      if: >-
+        ctx.winlog?.channel instanceof String &&
+        ctx.winlog.channel.toLowerCase() == 'security' &&
+        ctx.winlog.provider_name == 'AD FS Auditing' &&
+        ['1029', '1030', '307', '510'].contains(ctx.event?.code)
   - pipeline:
       name: '{{ IngestPipeline "security_scheduled_task" }}'
       if: >-

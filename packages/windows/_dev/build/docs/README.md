@@ -33,6 +33,8 @@ its actor can differ from `winlog.user`.
 For multi-address sign-in XML, `source.ip` uses the last, proxy-observed IP;
 earlier forwarded values can be supplied by clients and remain only in the
 raw `winlog.adfs.ip_address` chain.
+Positional audits and ECS normalization use standard ingest processors;
+only heterogeneous decoded XML components require a scoped script.
   
 ## Data streams
 

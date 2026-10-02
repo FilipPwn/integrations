@@ -1,0 +1,14 @@
+{
+  "expected": [
+    {
+      "event": {"code": "1202", "kind": "event", "action": "adfs-authentication-success", "category": ["authentication"], "type": ["start"], "outcome": "success"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1202", "event_data": {"param1": "10101010-1010-1010-1010-101010101010", "param2": "<AuditBase><AuditResult>Success</AuditResult><UserId source=\"ADFS\">Ada@lab.local</UserId><ContextComponents><Component><MfaPerformed>1</MfaPerformed></Component><Component><IpAddress>198.51.100.44, 10.10.10.5</IpAddress><CurrentBadPasswordCount source=\"ADFS\">4</CurrentBadPasswordCount></Component></ContextComponents></AuditBase>"}, "adfs": {"activity_id": "10101010-1010-1010-1010-101010101010", "audit_result": "Success", "user_id": "Ada@lab.local", "ip_address": "198.51.100.44, 10.10.10.5", "mfa_performed": true, "current_bad_password_count": 4}},
+      "user": {"name": "Ada", "domain": "lab.local"}, "source": {"ip": "10.10.10.5"}, "related": {"user": ["Ada", "Ada@lab.local"], "ip": ["10.10.10.5"]}, "ecs": {"version": "8.17.0"}, "host": {"os": {"type": "windows", "family": "windows"}}
+    },
+    {
+      "event": {"code": "1203", "kind": "event", "action": "adfs-authentication-failed", "category": ["authentication"], "type": ["start"], "outcome": "failure"},
+      "winlog": {"channel": "Security", "provider_name": "AD FS Auditing", "event_id": "1203", "event_data": {"param1": "12121212-1212-1212-1212-121212121212", "param2": "<AuditBase><AuditResult>Failure</AuditResult><UserId>N/A</UserId><ContextComponents><Component><IpAddress>198.51.100.44,</IpAddress><MfaPerformed>invalid</MfaPerformed></Component></ContextComponents></AuditBase>"}, "adfs": {"activity_id": "12121212-1212-1212-1212-121212121212", "audit_result": "Failure", "ip_address": "198.51.100.44,"}},
+      "source": {}, "ecs": {"version": "8.17.0"}, "host": {"os": {"type": "windows", "family": "windows"}}
+    }
+  ]
+}
